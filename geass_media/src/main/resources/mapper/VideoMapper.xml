@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.geass.media.mapper.VideoManagementMapper">
+
+    <!-- 1. 根据 VideoID 查询（不分页） -->
+    <select id="selectByID" parameterType="int" resultType="com.geass.media.model.VideoManagement">
+        SELECT * 
+        FROM VideoManagement
+        WHERE VideoID = #{id}
+    </select>
+
+    <!-- 2. 根据类型查询（分页） -->
+    <select id="selectByType" parameterType="map" resultType="com.geass.media.model.VideoManagement">
+        SELECT * 
+        FROM VideoManagement
+        WHERE VideoType = #{type}
+        ORDER BY favorite_count DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 3. 统计某类型视频总数 -->
+    <select id="countByType" parameterType="string" resultType="int">
+        SELECT COUNT(*) 
+        FROM VideoManagement
+        WHERE VideoType = #{type}
+    </select>
+
+    <!-- 4. 主演模糊查询（分页） -->
+    <select id="selectByLeadingActorsLike" parameterType="map" resultType="com.geass.media.model.VideoManagement">
+        SELECT * 
+        FROM VideoManagement
+        WHERE LeadingActors LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY favorite_count DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 5. 主演模糊匹配数量 -->
+    <select id="countByLeadingActorsLike" parameterType="string" resultType="int">
+        SELECT COUNT(*) 
+        FROM VideoManagement
+        WHERE LeadingActors LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+
+    <!-- 6. 视频名称模糊查询（分页） -->
+    <select id="selectByVideoNameLike" parameterType="map" resultType="com.geass.media.model.VideoManagement">
+        SELECT * 
+        FROM VideoManagement
+        WHERE VideoName LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY favorite_count DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 7. 视频名称模糊匹配数量 -->
+    <select id="countByVideoNameLike" parameterType="string" resultType="int">
+        SELECT COUNT(*) 
+        FROM VideoManagement
+        WHERE VideoName LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+
+    <!-- 8. 按收藏数降序查询（分页） -->
+    <select id="selectOrderByFavorite" parameterType="map" resultType="com.geass.media.model.VideoManagement">
+        SELECT * 
+        FROM VideoManagement
+        ORDER BY favorite_count DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 9. 按观看数降序查询（分页） -->
+    <select id="selectOrderByViewCount" parameterType="map" resultType="com.geass.media.model.VideoManagement">
+        SELECT * 
+        FROM VideoManagement
+        ORDER BY view_count DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 10. 查询总数 -->
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM VideoManagement
+    </select>
+
+</mapper>

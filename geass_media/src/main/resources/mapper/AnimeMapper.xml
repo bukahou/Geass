@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.geass.media.mapper.AnimeManagementMapper">
+
+    <!-- 1. 根据 AnimeID 查询（不分页） -->
+    <select id="selectByID" parameterType="int" resultType="com.geass.media.model.AnimeManagement">
+        SELECT * 
+        FROM AnimeManagement
+        WHERE AnimeID = #{id}
+    </select>
+
+    <!-- 2. 根据类型查询（分页） -->
+    <select id="selectByType" parameterType="map" resultType="com.geass.media.model.AnimeManagement">
+        SELECT * 
+        FROM AnimeManagement
+        WHERE AnimeType = #{type}
+        ORDER BY ReleaseDate DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 3. 统计某类型动漫总数 -->
+    <select id="countByType" parameterType="string" resultType="int">
+        SELECT COUNT(*) 
+        FROM AnimeManagement
+        WHERE AnimeType = #{type}
+    </select>
+
+    <!-- 4. 中文名称模糊查询（分页） -->
+    <select id="selectByCNNameLike" parameterType="map" resultType="com.geass.media.model.AnimeManagement">
+        SELECT * 
+        FROM AnimeManagement
+        WHERE CNName LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY ReleaseDate DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 5. 中文名称模糊匹配数量 -->
+    <select id="countByCNNameLike" parameterType="string" resultType="int">
+        SELECT COUNT(*) 
+        FROM AnimeManagement
+        WHERE CNName LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+
+    <!-- 6. 日文名称模糊查询（分页） -->
+    <select id="selectByJPNameLike" parameterType="map" resultType="com.geass.media.model.AnimeManagement">
+        SELECT * 
+        FROM AnimeManagement
+        WHERE JPName LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY ReleaseDate DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 7. 日文名称模糊匹配数量 -->
+    <select id="countByJPNameLike" parameterType="string" resultType="int">
+        SELECT COUNT(*) 
+        FROM AnimeManagement
+        WHERE JPName LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+
+    <!-- 8. 按收藏数降序查询（分页） -->
+    <select id="selectOrderByFavorite" parameterType="map" resultType="com.geass.media.model.AnimeManagement">
+        SELECT * 
+        FROM AnimeManagement
+        ORDER BY favorite_count DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 9. 按观看数降序查询（分页） -->
+    <select id="selectOrderByViewCount" parameterType="map" resultType="com.geass.media.model.AnimeManagement">
+        SELECT * 
+        FROM AnimeManagement
+        ORDER BY view_count DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 10. 按上映时间降序查询（分页） -->
+    <select id="selectOrderByReleaseDate" parameterType="map" resultType="com.geass.media.model.AnimeManagement">
+        SELECT * 
+        FROM AnimeManagement
+        ORDER BY ReleaseDate DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 11. 查询总数 -->
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM AnimeManagement
+    </select>
+
+</mapper>

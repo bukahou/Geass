@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.geass.favorites.mapper.FavoritesQueryMapper">
+
+    <!-- ================== 分页查询 ================== -->
+
+    <!-- 1. 根据 UserID 分页查询用户所有收藏 -->
+    <select id="selectByUserID" parameterType="map" resultType="com.geass.favorites.model.Favorites">
+        SELECT * 
+        FROM Favorites 
+        WHERE UserID = #{userID} 
+        ORDER BY FavoriteTime DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 1.2. 根据 UserID 统计收藏总数 -->
+    <select id="countByUserID" parameterType="int" resultType="int">
+        SELECT COUNT(*) 
+        FROM Favorites 
+        WHERE UserID = #{userID}
+    </select>
+
+
+    <!-- ================== 单表查询 ================== -->
+
+    <!-- 2. 根据 AnimeID 查询收藏记录（单个 ID，可能多条） -->
+    <select id="selectByAnimeID" parameterType="int" resultType="com.geass.favorites.model.AnimeManagement">
+        SELECT * 
+        FROM AnimeManagement 
+        WHERE AnimeID = #{animeID}
+    </select>
+
+    <!-- 2-1. 批量 AnimeID 查询 -->
+    <select id="selectByAnimeIDs" parameterType="list" resultType="com.geass.favorites.model.AnimeManagement">
+        SELECT * 
+        FROM AnimeManagement 
+        WHERE AnimeID IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <!-- 3. 根据 VideoID 查询收藏记录 -->
+    
+    <select id="selectByVideoID" parameterType="int" resultType="com.geass.favorites.model.VideoManagement">
+        SELECT * 
+        FROM VideoManagement 
+        WHERE VideoID = #{videoID}
+    </select>
+
+    <!-- 3-1. 批量 VideoID 查询 -->
+    <select id="selectByVideoIDs" parameterType="list" resultType="com.geass.favorites.model.VideoManagement">
+        SELECT * 
+        FROM VideoManagement 
+        WHERE VideoID IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <!-- 4. 根据 UraAnimeID 查询收藏记录 -->
+    <select id="selectByUraAnimeID" parameterType="int" resultType="com.geass.favorites.model.UraAnimeManagement">
+        SELECT * 
+        FROM UraAnimeManagement 
+        WHERE UraAnimeID = #{uraAnimeID}
+    </select>
+
+    <!-- 4-1. 批量 UraAnimeID 查询 -->
+    <select id="selectByUraAnimeIDs" parameterType="list" resultType="com.geass.favorites.model.UraAnimeManagement">
+        SELECT * 
+        FROM UraAnimeManagement 
+        WHERE UraAnimeID IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <!-- 5. 根据 ThreeDID 查询收藏记录 -->
+    <select id="selectByThreeDID" parameterType="int" resultType="com.geass.favorites.model.ThreeDManagement">
+        SELECT * 
+        FROM ThreeDManagement 
+        WHERE ThreeDID = #{threeDID}
+    </select>
+
+    <!-- 5-1. 批量 ThreeDID 查询 -->
+    <select id="selectByThreeDIDs" parameterType="list" resultType="com.geass.favorites.model.ThreeDManagement">
+        SELECT * 
+        FROM ThreeDManagement 
+        WHERE ThreeDID IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+
+	<!-- ================== 联表查询 ================== -->
+	
+	<!-- 1. 查用户收藏的 Anime 详情（批量 AnimeID） -->
+	<select id="selectUserAnimeFavoritesByIDs" parameterType="map" resultMap="AnimeFavoriteResult">
+	    SELECT f.FavoriteID, f.FavoriteTime,
+	           a.AnimeID, a.CNName, a.JPName, a.ImageURL,
+	           a.favorite_count, a.view_count, a.ReleaseDate
+	    FROM Favorites f
+	    JOIN AnimeManagement a ON f.AnimeID = a.AnimeID
+	    WHERE f.UserID = #{userID}
+	      AND f.AnimeID IN
+	      <foreach collection="animeIDs" item="id" open="(" separator="," close=")">
+	          #{id}
+	      </foreach>
+	    ORDER BY f.FavoriteTime DESC
+	</select>
+	
+	<resultMap id="AnimeFavoriteResult" type="com.geass.favorites.model.AnimeManagement">
+	    <id property="animeID" column="AnimeID"/>
+	    <result property="cnName" column="CNName"/>
+	    <result property="jpName" column="JPName"/>
+	    <result property="imageURL" column="ImageURL"/>
+	    <result property="favoriteCount" column="favorite_count"/>
+	    <result property="viewCount" column="view_count"/>
+	    <result property="releaseDate" column="ReleaseDate"/>
+	</resultMap>
+	
+	
+	<!-- 2. 查用户收藏的 Video 详情（批量 VideoID） -->
+	<select id="selectUserVideoFavoritesByIDs" parameterType="map" resultMap="VideoFavoriteResult">
+	    SELECT f.FavoriteID, f.FavoriteTime,
+	           v.VideoID, v.VideoName, v.VideoType, v.LeadingActors, v.ImageURL,
+	           v.favorite_count, v.view_count
+	    FROM Favorites f
+	    JOIN VideoManagement v ON f.VideoID = v.VideoID
+	    WHERE f.UserID = #{userID}
+	      AND f.VideoID IN
+	      <foreach collection="videoIDs" item="id" open="(" separator="," close=")">
+	          #{id}
+	      </foreach>
+	    ORDER BY f.FavoriteTime DESC
+	</select>
+	
+	<resultMap id="VideoFavoriteResult" type="com.geass.favorites.model.VideoManagement">
+	    <id property="videoID" column="VideoID"/>
+	    <result property="videoName" column="VideoName"/>
+	    <result property="videoType" column="VideoType"/>
+	    <result property="leadingActors" column="LeadingActors"/>
+	    <result property="imageURL" column="ImageURL"/>
+	    <result property="favoriteCount" column="favorite_count"/>
+	    <result property="viewCount" column="view_count"/>
+	</resultMap>
+	
+	
+	<!-- 3. 查用户收藏的 UraAnime 详情（批量 UraAnimeID） -->
+	<select id="selectUserUraAnimeFavoritesByIDs" parameterType="map" resultMap="UraAnimeFavoriteResult">
+	    SELECT f.FavoriteID, f.FavoriteTime,
+	           u.UraAnimeID, u.Title, u.ImageURL, u.favorite_count, u.Views, u.ReleaseDate
+	    FROM Favorites f
+	    JOIN UraAnimeManagement u ON f.UraAnimeID = u.UraAnimeID
+	    WHERE f.UserID = #{userID}
+	      AND f.UraAnimeID IN
+	      <foreach collection="uraAnimeIDs" item="id" open="(" separator="," close=")">
+	          #{id}
+	      </foreach>
+	    ORDER BY f.FavoriteTime DESC
+	</select>
+	
+	<resultMap id="UraAnimeFavoriteResult" type="com.geass.favorites.model.UraAnimeManagement">
+	    <id property="uraAnimeID" column="UraAnimeID"/>
+	    <result property="title" column="Title"/>
+	    <result property="imageURL" column="ImageURL"/>
+	    <result property="favoriteCount" column="favorite_count"/>
+	    <result property="views" column="Views"/>
+	    <result property="releaseDate" column="ReleaseDate"/>
+	</resultMap>
+	
+	
+	<!-- 4. 查用户收藏的 ThreeD 详情（批量 ThreeDID） -->
+	<select id="selectUserThreeDFavoritesByIDs" parameterType="map" resultMap="ThreeDFavoriteResult">
+	    SELECT f.FavoriteID, f.FavoriteTime,
+	           t.ThreeDID, t.CNTitle, t.JPTitle, t.ImageURL, t.favorite_count, t.Views, t.ReleaseDate
+	    FROM Favorites f
+	    JOIN ThreeDManagement t ON f.ThreeDID = t.ThreeDID
+	    WHERE f.UserID = #{userID}
+	      AND f.ThreeDID IN
+	      <foreach collection="threeDIDs" item="id" open="(" separator="," close=")">
+	          #{id}
+	      </foreach>
+	    ORDER BY f.FavoriteTime DESC
+	</select>
+	
+	<resultMap id="ThreeDFavoriteResult" type="com.geass.favorites.model.ThreeDManagement">
+	    <id property="threeDID" column="ThreeDID"/>
+	    <result property="cnTitle" column="CNTitle"/>
+	    <result property="jpTitle" column="JPTitle"/>
+	    <result property="imageURL" column="ImageURL"/>
+	    <result property="favoriteCount" column="favorite_count"/>
+	    <result property="views" column="Views"/>
+	    <result property="releaseDate" column="ReleaseDate"/>
+	</resultMap>
+
+
+</mapper>

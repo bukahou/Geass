@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.geass.media.mapper.UraAnimeManagementMapper">
+
+    <!-- 1. 根据 ID 查询 -->
+    <select id="selectByID" parameterType="int" resultType="com.geass.media.model.UraAnimeManagement">
+        SELECT *
+        FROM UraAnimeManagement
+        WHERE UraAnimeID = #{id}
+    </select>
+
+    <!-- 2. 标题模糊查询（分页） -->
+    <select id="selectByTitleLike" parameterType="map" resultType="com.geass.media.model.UraAnimeManagement">
+        SELECT *
+        FROM UraAnimeManagement
+        WHERE Title LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY ReleaseDate DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 3. 标题模糊查询计数 -->
+    <select id="countByTitleLike" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM UraAnimeManagement
+        WHERE Title LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+
+    <!-- 4. 按收藏数降序分页 -->
+    <select id="selectOrderByFavorite" parameterType="map" resultType="com.geass.media.model.UraAnimeManagement">
+        SELECT *
+        FROM UraAnimeManagement
+        ORDER BY favorite_count DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 5. 按观看数降序分页 -->
+    <select id="selectOrderByViewCount" parameterType="map" resultType="com.geass.media.model.UraAnimeManagement">
+        SELECT *
+        FROM UraAnimeManagement
+        ORDER BY Views DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 6. 按发行日期降序分页 -->
+    <select id="selectOrderByReleaseDate" parameterType="map" resultType="com.geass.media.model.UraAnimeManagement">
+        SELECT *
+        FROM UraAnimeManagement
+        ORDER BY ReleaseDate DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 7. 总数查询 -->
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM UraAnimeManagement
+    </select>
+
+</mapper>

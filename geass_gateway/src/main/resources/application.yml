@@ -1,0 +1,36 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: geass_gateway
+
+jwt:
+  secret: ${GEASS_JWT_SECRET:myVeryStrongSecretKeyForJwt1234567890!@#$}
+  expiration: ${GEASS_JWT_EXPIRATION:7} # 单位：天
+
+services:
+  media: ${GEASS_SERVICE_MEDIA:http://localhost:8081}
+  favorites: ${GEASS_SERVICE_FAVORITES:http://localhost:8082}
+  history: ${GEASS_SERVICE_HISTORY:http://localhost:8083}
+  user: ${GEASS_SERVICE_USER:http://localhost:8084}
+
+cors:
+  allowCredentials: ${GEASS_CORS_ALLOW_CREDENTIALS:true}
+  allowedOrigins:
+    - ${GEASS_CORS_ORIGIN_1:https://atlhyper.com}
+    - ${GEASS_CORS_ORIGIN_2:http://atlhyper.com}
+    - ${GEASS_CORS_ORIGIN_3:https://www.atlhyper.com}
+    - ${GEASS_CORS_ORIGIN_4:http://www.atlhyper.com}
+    - ${GEASS_CORS_ORIGIN_5:http://localhost:8080}
+    - ${GEASS_CORS_ORIGIN_6:http://127.0.0.1:8080}
+  allowedMethods:
+    - ${GEASS_CORS_METHOD_1:GET}
+    - ${GEASS_CORS_METHOD_2:POST}
+    - ${GEASS_CORS_METHOD_3:PUT}
+    - ${GEASS_CORS_METHOD_4:DELETE}
+    - ${GEASS_CORS_METHOD_5:OPTIONS}
+  allowedHeaders:
+    - ${GEASS_CORS_HEADER_1:*}
+  exposedHeaders:
+    - ${GEASS_CORS_EXPOSED_HEADER_1:Authorization}

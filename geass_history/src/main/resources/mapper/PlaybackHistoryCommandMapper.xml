@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.geass.history.mapper.PlaybackHistoryCommandMapper">
+
+  <!-- ========================= -->
+  <!-- 用户存在性检查 -->
+  <!-- ========================= -->
+  <select id="existsByUserID" parameterType="int" resultType="boolean">
+    SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
+    FROM UserManagement
+    WHERE UserID = #{userID}
+  </select>
+
+  <!-- ========================= -->
+  <!-- 动态检查是否已有观看记录（UserID + 某个资源ID） -->
+  <!-- 参数建议用 PlaybackHistory 对象，仅需 userID + 其中一个资源ID 非空 -->
+  <!-- ========================= -->
+  <select id="existsHistory" parameterType="com.geass.history.model.PlaybackHistory" resultType="boolean">
+    SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
+    FROM PlaybackHistory
+    WHERE UserID = #{userID}
+    <if test="animeID != null">AND AnimeID = #{animeID}</if>
+    <if test="videoID != null">AND VideoID = #{videoID}</if>
+    <if test="uraAnimeID != null">AND UraAnimeID = #{uraAnimeID}</if>
+    <if test="threeDID != null">AND ThreeDID = #{threeDID}</if>
+  </select>
+
+  <!-- ========================= -->
+  <!-- 更新已有记录的 PlayTime（只更新时间戳；可选地更新 DurationWatched） -->
+  <!-- 安全保护：使用 choose，确保只按“一种资源ID”写 where 子句 -->
+  <!-- ========================= -->
+  <update id="updatePlayTime" parameterType="com.geass.history.model.PlaybackHistory">
+    UPDATE PlaybackHistory
+    SET PlayTime = NOW()
+    <if test="durationWatched != null">
+      , DurationWatched = #{durationWatched}
+    </if>
+    <choose>
+      <when test="animeID != null">
+        WHERE UserID = #{userID} AND AnimeID = #{animeID}
+      </when>
+      <when test="videoID != null">
+        WHERE UserID = #{userID} AND VideoID = #{videoID}
+      </when>
+      <when test="uraAnimeID != null">
+        WHERE UserID = #{userID} AND UraAnimeID = #{uraAnimeID}
+      </when>
+      <when test="threeDID != null">
+        WHERE UserID = #{userID} AND ThreeDID = #{threeDID}
+      </when>
+      <otherwise>
+        AND 1 = 0
+      </otherwise>
+    </choose>
+  </update>
+
+  <!-- ========================= -->
+  <!-- 插入新的播放历史 -->
+  <!-- 仅允许一个资源ID非空；PlayTime 用 NOW() -->
+  <!-- ========================= -->
+  <insert id="insertHistory" parameterType="com.geass.history.model.PlaybackHistory"
+          useGeneratedKeys="true" keyProperty="historyID">
+    INSERT INTO PlaybackHistory
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      UserID,
+      <if test="animeID != null">AnimeID,</if>
+      <if test="videoID != null">VideoID,</if>
+      <if test="uraAnimeID != null">UraAnimeID,</if>
+      <if test="threeDID != null">ThreeDID,</if>
+      PlayTime,
+      <if test="durationWatched != null">DurationWatched,</if>
+    </trim>
+    <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+      #{userID},
+      <if test="animeID != null">#{animeID},</if>
+      <if test="videoID != null">#{videoID},</if>
+      <if test="uraAnimeID != null">#{uraAnimeID},</if>
+      <if test="threeDID != null">#{threeDID},</if>
+      NOW(),
+      <if test="durationWatched != null">#{durationWatched},</if>
+    </trim>
+  </insert>
+
+  <!-- （可选）把四个自增合成一个动态语句，若你更喜欢单方法调用 -->
+  <update id="incrementViewsDynamic" parameterType="com.geass.history.model.PlaybackHistory">
+    <choose>
+      <when test="animeID != null">
+        UPDATE AnimeManagement SET view_count = view_count + 1 WHERE AnimeID = #{animeID}
+      </when>
+      <when test="videoID != null">
+        UPDATE VideoManagement SET view_count = view_count + 1 WHERE VideoID = #{videoID}
+      </when>
+      <when test="uraAnimeID != null">
+        UPDATE UraAnimeManagement SET Views = Views + 1 WHERE UraAnimeID = #{uraAnimeID}
+      </when>
+      <when test="threeDID != null">
+        UPDATE ThreeDManagement SET Views = Views + 1 WHERE ThreeDID = #{threeDID}
+      </when>
+      <otherwise>
+        /* no-op */
+        SELECT 1
+      </otherwise>
+    </choose>
+  </update>
+
+</mapper>

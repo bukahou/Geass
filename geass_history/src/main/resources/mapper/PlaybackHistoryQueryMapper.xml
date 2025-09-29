@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.geass.history.mapper.PlaybackHistoryQueryMapper">
+
+    <!-- ================== 分页查询 ================== -->
+
+    <!-- 1. 根据 UserID 分页查询用户所有播放历史 -->
+    <select id="selectByUserID" parameterType="map" resultType="com.geass.history.model.PlaybackHistory">
+        SELECT * 
+        FROM PlaybackHistory
+        WHERE UserID = #{userID} 
+        ORDER BY PlayTime DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 1.2. 根据 UserID 统计总数 -->
+    <select id="countByUserID" parameterType="int" resultType="int">
+        SELECT COUNT(*) 
+        FROM PlaybackHistory
+        WHERE UserID = #{userID}
+    </select>
+
+
+    <!-- ================== 单表查询 ================== -->
+
+    <!-- 2. 根据 AnimeID 查询动漫播放历史 -->
+    <select id="selectByAnimeID" parameterType="int" resultType="com.geass.history.model.AnimeManagement">
+        SELECT * 
+        FROM AnimeManagement
+        WHERE AnimeID = #{animeID}
+    </select>
+
+    <select id="selectByAnimeIDs" parameterType="list" resultType="com.geass.history.model.AnimeManagement">
+        SELECT *
+        FROM AnimeManagement
+        WHERE AnimeID IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+
+    <!-- 3. 根据 VideoID 查询视频播放历史 -->
+    <select id="selectByVideoID" parameterType="int" resultType="com.geass.history.model.VideoManagement">
+        SELECT * 
+        FROM VideoManagement
+        WHERE VideoID = #{videoID}
+    </select>
+
+    <select id="selectByVideoIDs" parameterType="list" resultType="com.geass.history.model.VideoManagement">
+        SELECT * 
+        FROM VideoManagement
+        WHERE VideoID IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+
+    <!-- 4. 根据 UraAnimeID 查询里番播放历史 -->
+    <select id="selectByUraAnimeID" parameterType="int" resultType="com.geass.history.model.UraAnimeManagement">
+        SELECT * 
+        FROM UraAnimeManagement
+        WHERE UraAnimeID = #{uraAnimeID}
+    </select>
+
+    <select id="selectByUraAnimeIDs" parameterType="list" resultType="com.geass.history.model.UraAnimeManagement">
+        SELECT * 
+        FROM UraAnimeManagement
+        WHERE UraAnimeID IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+
+    <!-- 5. 根据 ThreeDID 查询 3D 播放历史 -->
+    <select id="selectByThreeDID" parameterType="int" resultType="com.geass.history.model.ThreeDManagement">
+        SELECT * 
+        FROM ThreeDManagement
+        WHERE ThreeDID = #{threeDID}
+    </select>
+
+    <select id="selectByThreeDIDs" parameterType="list" resultType="com.geass.history.model.ThreeDManagement">
+        SELECT * 
+        FROM ThreeDManagement
+        WHERE ThreeDID IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

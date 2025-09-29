@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.geass.media.mapper.ThreeDManagementMapper">
+
+    <!-- 1. 根据 ID 查询 -->
+    <select id="selectByID" parameterType="int" resultType="com.geass.media.model.ThreeDManagement">
+        SELECT * 
+        FROM ThreeDManagement
+        WHERE ThreeDID = #{id}
+    </select>
+
+    <!-- 2. 中文标题模糊查询（分页） -->
+    <select id="selectByCNTitleLike" parameterType="map" resultType="com.geass.media.model.ThreeDManagement">
+        SELECT * 
+        FROM ThreeDManagement
+        WHERE CNTitle LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY ReleaseDate DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 3. 中文标题匹配数量 -->
+    <select id="countByCNTitleLike" parameterType="string" resultType="int">
+        SELECT COUNT(*) 
+        FROM ThreeDManagement
+        WHERE CNTitle LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+
+    <!-- 4. 日文标题模糊查询（分页） -->
+    <select id="selectByJPTitleLike" parameterType="map" resultType="com.geass.media.model.ThreeDManagement">
+        SELECT * 
+        FROM ThreeDManagement
+        WHERE JPTitle LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY ReleaseDate DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 5. 日文标题匹配数量 -->
+    <select id="countByJPTitleLike" parameterType="string" resultType="int">
+        SELECT COUNT(*) 
+        FROM ThreeDManagement
+        WHERE JPTitle LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+
+    <!-- 6. 按收藏数降序查询（分页） -->
+    <select id="selectOrderByFavorite" parameterType="map" resultType="com.geass.media.model.ThreeDManagement">
+        SELECT * 
+        FROM ThreeDManagement
+        ORDER BY favorite_count DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 7. 按观看数降序查询（分页） -->
+    <select id="selectOrderByViews" parameterType="map" resultType="com.geass.media.model.ThreeDManagement">
+        SELECT * 
+        FROM ThreeDManagement
+        ORDER BY Views DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 8. 按发行日期降序查询（分页） -->
+    <select id="selectOrderByReleaseDate" parameterType="map" resultType="com.geass.media.model.ThreeDManagement">
+        SELECT * 
+        FROM ThreeDManagement
+        ORDER BY ReleaseDate DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 9. 查询总数 -->
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM ThreeDManagement
+    </select>
+
+</mapper>

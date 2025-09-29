@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.geass.user.mapper.UserManagementMapper">
+
+  <!-- 检查用户名是否存在 -->
+  <select id="existsByUsername" parameterType="string" resultType="boolean">
+    SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
+    FROM UserManagement
+    WHERE Username = #{username}
+  </select>
+
+  <!-- 检查邮箱是否已验证 -->
+  <select id="isEmailVerified" parameterType="string" resultType="boolean">
+    SELECT CASE WHEN EmailVerified = 1 THEN TRUE ELSE FALSE END
+    FROM UserManagement
+    WHERE Email = #{email}
+    LIMIT 1
+  </select>
+
+
+  <!-- 新增用户（注册） -->
+  <insert id="insertUser" parameterType="com.geass.user.model.UserManagement"
+          useGeneratedKeys="true" keyProperty="userID">
+    INSERT INTO UserManagement
+    (Name, Username, Password, Role, Avatar, Email, EmailVerified)
+    VALUES
+    (#{name}, #{username}, #{password}, #{role}, #{avatar}, #{email}, #{emailVerified})
+  </insert>
+
+  <!-- 登录：根据用户名查询（含密码等全量字段） -->
+  <select id="selectByUsername" parameterType="string" resultType="com.geass.user.model.UserManagement">
+    SELECT *
+    FROM UserManagement
+    WHERE Username = #{username}
+    LIMIT 1
+  </select>
+
+  <!-- 根据 UserID 查询（脱敏：不返回密码） -->
+  <select id="selectByUserID" parameterType="int" resultType="com.geass.user.model.UserManagement">
+    SELECT
+      UserID, Name, Username, Role, Avatar, Email, EmailVerified, RegistrationDate
+    FROM UserManagement
+    WHERE UserID = #{userID}
+  </select>
+
+  <!-- 权限修改 -->
+  <update id="updateUserRole">
+    UPDATE UserManagement
+    SET Role = #{role}
+    WHERE UserID = #{userID}
+  </update>
+
+  <!-- 修改头像 URL -->
+  <update id="updateUserAvatar">
+    UPDATE UserManagement
+    SET Avatar = #{avatar}
+    WHERE UserID = #{userID}
+  </update>
+
+  <!-- 修改密码（请在 Service 层先做旧密码校验 & 加密） -->
+  <update id="updateUserPassword">
+    UPDATE UserManagement
+    SET Password = #{password}
+    WHERE UserID = #{userID}
+  </update>
+
+  <!-- 找回账号：根据邮箱查用户（可用于发送重置链接） -->
+  <select id="selectByEmail" parameterType="string" resultType="com.geass.user.model.UserManagement">
+    SELECT *
+    FROM UserManagement
+    WHERE Email = #{email}
+    LIMIT 1
+  </select>
+
+</mapper>

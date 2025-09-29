@@ -1,0 +1,32 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: geass_user
+
+  datasource:
+    url: ${GEASS_DB_URL}
+    username: ${GEASS_DB_USERNAME}
+    password: ${GEASS_DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jackson:
+    date-format: yyyy/MM/dd
+    time-zone: Asia/Tokyo
+
+  data:
+    redis:
+      host: ${GEASS_REDIS_HOST}
+      port: ${GEASS_REDIS_PORT}
+      timeout: ${GEASS_REDIS_TIMEOUT:5000ms}
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.geass.user.model
+  configuration:
+    map-underscore-to-camel-case: true
+
+jwt:
+  secret: ${GEASS_JWT_SECRET:myVeryStrongSecretKeyForJwt1234567890!@#$}
+  expiration: ${GEASS_JWT_EXPIRATION:7}

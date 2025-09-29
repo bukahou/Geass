@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.geass.favorites.mapper.FavoritesCommandMapper">
+
+    <!-- ========================= -->
+    <!-- 用户存在性检查 -->
+    <!-- ========================= -->
+    <!-- 说明: 判断 UserID 是否存在于 UserManagement 表中 -->
+    <select id="existsByUserID" parameterType="int" resultType="boolean">
+        SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
+        FROM UserManagement
+        WHERE UserID = #{userID}
+    </select>
+    
+    
+    <!-- ========================= -->
+	<!-- 新增前检查 -->
+	<!-- ========================= -->
+	<select id="existsFavorite" parameterType="map" resultType="boolean">
+	    SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
+	    FROM Favorites
+	    WHERE UserID = #{userID}
+	    <if test="animeID != null">AND AnimeID = #{animeID}</if>
+	    <if test="videoID != null">AND VideoID = #{videoID}</if>
+	    <if test="uraAnimeID != null">AND UraAnimeID = #{uraAnimeID}</if>
+	    <if test="threeDID != null">AND ThreeDID = #{threeDID}</if>
+	</select>
+    
+    
+    <!-- ========================= -->
+	<!-- 删除前检查 -->
+	<!-- ========================= -->
+	
+	<select id="existsFavoriteByID" parameterType="int" resultType="boolean">
+	    SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
+	    FROM Favorites
+	    WHERE FavoriteID = #{favoriteID}
+	</select>
+
+
+    <!-- ========================= -->
+    <!-- 新增收藏记录 -->
+    <!-- ========================= -->
+    <!-- 说明: 每次只插入一个资源 (AnimeID / VideoID / UraAnimeID / ThreeDID 之一) -->
+    <!-- 注意: 使用 <trim> 防止动态拼接时多余逗号 -->
+    <insert id="insertFavorite" parameterType="com.geass.favorites.model.Favorites"
+            useGeneratedKeys="true" keyProperty="favoriteID">
+
+        INSERT INTO Favorites
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            UserID,
+            <if test="animeID != null">AnimeID,</if>
+            <if test="videoID != null">VideoID,</if>
+            <if test="uraAnimeID != null">UraAnimeID,</if>
+            <if test="threeDID != null">ThreeDID,</if>
+            FavoriteTime
+        </trim>
+
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            #{userID},
+            <if test="animeID != null">#{animeID},</if>
+            <if test="videoID != null">#{videoID},</if>
+            <if test="uraAnimeID != null">#{uraAnimeID},</if>
+            <if test="threeDID != null">#{threeDID},</if>
+            NOW()
+        </trim>
+    </insert>
+
+
+    <!-- ========================= -->
+    <!-- 删除收藏记录 -->
+    <!-- ========================= -->
+    <!-- 说明: 根据 FavoriteID 删除收藏 -->
+    <delete id="deleteFavorite" parameterType="int">
+        DELETE 
+        FROM Favorites 
+        WHERE FavoriteID = #{favoriteID}
+    </delete>
+    
+    <!-- ========================= -->
+	<!-- 根据 UserID + 资源ID 删除收藏 -->
+	<!-- ========================= -->
+	<delete id="deleteFavoriteByUserAndResource" parameterType="com.geass.favorites.model.Favorites">
+	    DELETE FROM Favorites
+	    WHERE UserID = #{userID}
+	    <if test="animeID != null">
+	        AND AnimeID = #{animeID}
+	    </if>
+	    <if test="videoID != null">
+	        AND VideoID = #{videoID}
+	    </if>
+	    <if test="uraAnimeID != null">
+	        AND UraAnimeID = #{uraAnimeID}
+	    </if>
+	    <if test="threeDID != null">
+	        AND ThreeDID = #{threeDID}
+	    </if>
+	</delete>
+    
+
+
+    <!-- ========================= -->
+    <!-- 收藏数更新 (Anime) -->
+    <!-- ========================= -->
+    <!-- 收藏数 +1 -->
+    <update id="incrementAnimeFavoriteCount" parameterType="int">
+        UPDATE AnimeManagement
+        SET favorite_count = favorite_count + 1
+        WHERE AnimeID = #{animeID}
+    </update>
+
+    <!-- 收藏数 -1 (避免小于 0) -->
+    <update id="decrementAnimeFavoriteCount" parameterType="int">
+        UPDATE AnimeManagement
+        SET favorite_count = favorite_count - 1
+        WHERE AnimeID = #{animeID} AND favorite_count > 0
+    </update>
+
+
+    <!-- ========================= -->
+    <!-- 收藏数更新 (Video) -->
+    <!-- ========================= -->
+    <update id="incrementVideoFavoriteCount" parameterType="int">
+        UPDATE VideoManagement
+        SET favorite_count = favorite_count + 1
+        WHERE VideoID = #{videoID}
+    </update>
+
+    <update id="decrementVideoFavoriteCount" parameterType="int">
+        UPDATE VideoManagement
+        SET favorite_count = favorite_count - 1
+        WHERE VideoID = #{videoID} AND favorite_count > 0
+    </update>
+
+
+    <!-- ========================= -->
+    <!-- 收藏数更新 (UraAnime) -->
+    <!-- ========================= -->
+    <update id="incrementUraAnimeFavoriteCount" parameterType="int">
+        UPDATE UraAnimeManagement
+        SET favorite_count = favorite_count + 1
+        WHERE UraAnimeID = #{uraAnimeID}
+    </update>
+
+    <update id="decrementUraAnimeFavoriteCount" parameterType="int">
+        UPDATE UraAnimeManagement
+        SET favorite_count = favorite_count - 1
+        WHERE UraAnimeID = #{uraAnimeID} AND favorite_count > 0
+    </update>
+
+
+    <!-- ========================= -->
+    <!-- 收藏数更新 (ThreeD) -->
+    <!-- ========================= -->
+    <update id="incrementThreeDFavoriteCount" parameterType="int">
+        UPDATE ThreeDManagement
+        SET favorite_count = favorite_count + 1
+        WHERE ThreeDID = #{threeDID}
+    </update>
+
+    <update id="decrementThreeDFavoriteCount" parameterType="int">
+        UPDATE ThreeDManagement
+        SET favorite_count = favorite_count - 1
+        WHERE ThreeDID = #{threeDID} AND favorite_count > 0
+    </update>
+
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.geass.user.mapper.UserLoginManagementMapper">
+
+  <!-- 插入登录记录（登录时写日志） -->
+  <insert id="insertLoginRecord" parameterType="com.geass.user.model.UserLoginManagement"
+          useGeneratedKeys="true" keyProperty="loginID">
+    INSERT INTO UserLoginManagement
+    (UserID, LoginTime, IP_Address, DeviceInfo, LoginStatus, FailureReason)
+    VALUES
+    (#{userID}, NOW(), #{ipAddress}, #{deviceInfo}, #{loginStatus}, #{failureReason})
+  </insert>
+
+  <!-- 更新登出时间（登出时写回） -->
+  <update id="updateLogoutTime" parameterType="int">
+    UPDATE UserLoginManagement
+    SET LogoutTime = NOW()
+    WHERE LoginID = #{loginID}
+  </update>
+
+</mapper>

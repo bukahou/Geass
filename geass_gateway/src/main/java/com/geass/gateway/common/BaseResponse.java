@@ -10,7 +10,7 @@ import lombok.Data;
 public class BaseResponse<T> {
     private int code;       // 状态码
     private String message; // 提示信息
-    private T data;         // 数据（可为分页 / 单个对象 / 列表）
+    private T data;         // 数据
 
     // 成功
     public static <T> BaseResponse<T> success(T data) {

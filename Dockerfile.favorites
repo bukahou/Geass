@@ -20,10 +20,13 @@ WORKDIR /app
 # 从 builder 阶段复制打包后的 JAR
 COPY --from=builder /build/target/*.jar app.jar
 
+# ✅ 拷贝 Pinpoint Agent
+COPY pinpoint-agent /pinpoint-agent/
+
+# 设置 Pinpoint Agent JVM 参数
+ENV JAVA_OPTS=""
+
 # 与 application.yml 保持一致
 EXPOSE 8082
-
-# JVM 参数扩展口
-ENV JAVA_OPTS=""
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]

@@ -1,0 +1,29 @@
+# ==============================
+# Geass History Service Dockerfile
+# ==============================
+
+# ---------- 构建阶段 ----------
+FROM maven:3.9.8-eclipse-temurin-21 AS builder
+WORKDIR /build
+
+# 复制 history 模块的 pom.xml 和源码
+COPY geass_history/pom.xml .
+COPY geass_history/src ./src
+
+# 使用 Maven 打包，跳过测试
+RUN mvn clean package -DskipTests
+
+# ---------- 运行阶段 ----------
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+
+# 从 builder 阶段复制打包后的 JAR
+COPY --from=builder /build/target/*.jar app.jar
+
+# 与 application.yml 保持一致
+EXPOSE 8083
+
+# JVM 参数扩展口
+ENV JAVA_OPTS=""
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]

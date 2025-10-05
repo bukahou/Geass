@@ -1,0 +1,29 @@
+# ==============================
+# Geass Media Service Dockerfile
+# ==============================
+
+# ---------- 构建阶段 ----------
+FROM maven:3.9.8-eclipse-temurin-21 AS builder
+WORKDIR /build
+
+# 只复制 media 模块的 pom.xml 和源码
+COPY geass_media/pom.xml .
+COPY geass_media/src ./src
+
+# 使用 Maven 打包，跳过测试
+RUN mvn clean package -DskipTests
+
+# ---------- 运行阶段 ----------
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+
+# 从 builder 阶段复制打包后的 JAR
+COPY --from=builder /build/target/*.jar app.jar
+
+# 暴露 8081，与 application.yml 对齐
+EXPOSE 8081
+
+# JVM 启动参数可通过环境变量传入（可选）
+ENV JAVA_OPTS=""
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]

@@ -11,15 +11,14 @@ spring:
     password: ${GEASS_DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  redis:
+    host: ${GEASS_REDIS_HOST:redis.redis.svc.cluster.local}
+    port: ${GEASS_REDIS_PORT:6379}
+    timeout: 5000ms
+
   jackson:
     date-format: yyyy/MM/dd
     time-zone: Asia/Tokyo
-
-  data:
-    redis:
-      host: ${GEASS_REDIS_HOST}
-      port: ${GEASS_REDIS_PORT}
-      timeout: ${GEASS_REDIS_TIMEOUT:5000ms}
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml

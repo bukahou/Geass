@@ -3,7 +3,7 @@
 # ==============================
 
 # ---------- 构建阶段 ----------
-FROM maven:3.9.8-eclipse-temurin-21 AS builder
+FROM maven:3.9.8-eclipse-temurin-17 AS builder
 WORKDIR /build
 
 # 只复制 media 模块的 pom.xml 和源码
@@ -14,7 +14,7 @@ COPY geass_media/src ./src
 RUN mvn clean package -DskipTests
 
 # ---------- 运行阶段 ----------
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:17-jre
 WORKDIR /app
 
 # 从 builder 阶段复制打包后的 JAR

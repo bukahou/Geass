@@ -11,11 +11,10 @@ spring:
     password: ${GEASS_DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  data:
-    redis:
-      host: ${GEASS_REDIS_HOST:192.168.0.129}
-      port: ${GEASS_REDIS_PORT:6379}
-      timeout: 3s
+  redis:
+    host: ${GEASS_REDIS_HOST:redis.redis.svc.cluster.local}
+    port: ${GEASS_REDIS_PORT:6379}
+    timeout: 5000ms
 
   jackson:
     date-format: yyyy/MM/dd

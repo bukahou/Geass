@@ -1,20 +1,20 @@
 # ==============================
-# Geass User Service Dockerfile
+# Geass Favorites Service Dockerfile
 # ==============================
 
 # ---------- 构建阶段 ----------
-FROM maven:3.9.8-eclipse-temurin-21 AS builder
+FROM maven:3.9.8-eclipse-temurin-17 AS builder
 WORKDIR /build
 
-# 复制 user 模块的 pom.xml 和源码
-COPY geass_user/pom.xml .
-COPY geass_user/src ./src
+# 复制 favorites 模块的 pom.xml 和源码
+COPY geass_favorites/pom.xml .
+COPY geass_favorites/src ./src
 
 # 使用 Maven 打包，跳过测试
 RUN mvn clean package -DskipTests
 
 # ---------- 运行阶段 ----------
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:17-jre
 WORKDIR /app
 
 # 从 builder 阶段复制打包后的 JAR
@@ -27,6 +27,6 @@ COPY pinpoint-agent /pinpoint-agent/
 ENV JAVA_OPTS=""
 
 # 与 application.yml 保持一致
-EXPOSE 8084
+EXPOSE 8082
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]

@@ -1,20 +1,20 @@
 # ==============================
-# Geass History Service Dockerfile
+# Geass Gateway Service Dockerfile
 # ==============================
 
 # ---------- 构建阶段 ----------
-FROM maven:3.9.8-eclipse-temurin-21 AS builder
+FROM maven:3.9.8-eclipse-temurin-17 AS builder
 WORKDIR /build
 
-# 复制 history 模块的 pom.xml 和源码
-COPY geass_history/pom.xml .
-COPY geass_history/src ./src
+# 只复制 gateway 模块的 pom.xml 和源码
+COPY geass_gateway/pom.xml .
+COPY geass_gateway/src ./src
 
 # 使用 Maven 打包，跳过测试
 RUN mvn clean package -DskipTests
 
 # ---------- 运行阶段 ----------
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:17-jre
 WORKDIR /app
 
 # 从 builder 阶段复制打包后的 JAR
@@ -23,10 +23,10 @@ COPY --from=builder /build/target/*.jar app.jar
 # ✅ 拷贝 Pinpoint Agent
 COPY pinpoint-agent /pinpoint-agent/
 
-# 设置 Pinpoint Agent JVM 参数
+# 设置 Agent 环境变量
 ENV JAVA_OPTS=""
 
-# 与 application.yml 保持一致
-EXPOSE 8083
+# 网关默认端口 8080（与 application.yml 对齐）
+EXPOSE 8080
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]

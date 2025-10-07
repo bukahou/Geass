@@ -11,7 +11,7 @@ docker buildx inspect --bootstrap
 
 echo "🚀 [Step 2] Building and pushing: ${IMAGE_NAME}:${TAG}"
 docker buildx build \
-  -f Dockerfile.gateway \
+  -f Dockerfile/Dockerfile.gateway \
   --platform linux/amd64,linux/arm64 \
   -t ${IMAGE_NAME}:${TAG} \
   --no-cache \

@@ -1,4 +1,3 @@
-// src/components/Navbar/NavLinks.tsx
 "use client";
 
 import Link from "next/link";
@@ -14,19 +13,21 @@ export default function NavLinks() {
   const pathname = usePathname();
 
   return (
-    <nav className="space-x-4">
+    <div className="flex flex-col space-y-3">
       {links.map(({ href, label }) => (
         <Link
           key={href}
           href={href}
           className={clsx(
-            "text-sm hover:underline",
-            pathname === href ? "font-bold text-blue-500" : "text-gray-700"
+            "text-sm transition-colors",
+            pathname === href
+              ? "font-bold text-blue-400"
+              : "text-gray-300 hover:text-blue-400"
           )}
         >
           {label}
         </Link>
       ))}
-    </nav>
+    </div>
   );
 }

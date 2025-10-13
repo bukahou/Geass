@@ -24,6 +24,8 @@ cors:
     - ${GEASS_CORS_ORIGIN_4:http://www.atlhyper.com}
     - ${GEASS_CORS_ORIGIN_5:http://localhost:8080}
     - ${GEASS_CORS_ORIGIN_6:http://127.0.0.1:8080}
+    - ${GEASS_CORS_ORIGIN_5:http://localhost:3000}
+    - ${GEASS_CORS_ORIGIN_6:http://127.0.0.1:3000}
   allowedMethods:
     - ${GEASS_CORS_METHOD_1:GET}
     - ${GEASS_CORS_METHOD_2:POST}

@@ -1,14 +1,4 @@
 // src/api/config.ts
-
-// const API_BASE_URL =
-//   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
-
-// export const apiConfig = {
-//   baseURL: API_BASE_URL,
-//   timeout: 5000,
-// };
-
-// src/api/config.ts
 const isDev = process.env.NODE_ENV === "development";
 
 // 在开发环境下，不直接访问 8080，而是走 Next.js 代理

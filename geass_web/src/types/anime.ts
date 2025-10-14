@@ -5,7 +5,7 @@
  * 📦 Anime 模块类型定义
  * ========================================
  */
-
+import type { PageResponse } from "@/types/common";
 /** 分页基础请求结构 */
 export interface AnimeListRequest {
   page: number; // 当前页码（从 1 开始）
@@ -41,11 +41,13 @@ export interface AnimeInfo {
   releaseDate: string;
 }
 
+export type AnimeListResponse = PageResponse<AnimeInfo>;
+
 /** 通用分页响应结构 */
-export interface PageResponse<T> {
-  total: number; // 数据总数
-  page: number; // 当前页码
-  pageSize: number; // 每页条数
-  totalPages: number; // 总页数
-  data: T[]; // 结果数据数组
-}
+// export interface PageResponse<T> {
+//   total: number; // 数据总数
+//   page: number; // 当前页码
+//   pageSize: number; // 每页条数
+//   totalPages: number; // 总页数
+//   data: T[]; // 结果数据数组
+// }

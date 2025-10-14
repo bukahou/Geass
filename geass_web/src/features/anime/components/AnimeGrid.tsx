@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import type { AnimeInfo } from "@/types/anime";
+import AnimeCard from "./AnimeCard";
 import AnimeDetailModal from "./AnimeDetailModal";
-import { buildImageUrl } from "@/utils/mediaUrlBuilder";
+// import Image from "next/image";
+// import { buildImageUrl } from "@/utils/mediaUrlBuilder";
 
 interface AnimeGridProps {
   animes: AnimeInfo[];
@@ -26,50 +27,13 @@ export default function AnimeGrid({ animes }: AnimeGridProps) {
           xl:grid-cols-5
         "
       >
-        {animes.map((anime) => {
-          const fullImageURL = buildImageUrl(anime.imageURL);
-
-          return (
-            <div
-              key={anime.animeID}
-              onClick={() => setSelectedAnime(anime)}
-              className="
-                bg-white 
-                rounded-lg 
-                overflow-hidden 
-                shadow-sm 
-                hover:shadow-lg 
-                cursor-pointer 
-                transition 
-                transform 
-                hover:-translate-y-1 
-                duration-200
-              "
-            >
-              <div className="relative w-full aspect-[3/4]">
-                <Image
-                  src={fullImageURL}
-                  alt={anime.cnName}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-
-              <div className="p-3">
-                <h3
-                  className="text-sm font-semibold text-gray-800 truncate"
-                  title={anime.cnName}
-                >
-                  {anime.cnName}
-                </h3>
-                <p className="text-xs text-gray-500 mt-1">
-                  ❤ {anime.favoriteCount} · 👁‍🗨 {anime.viewCount} · 共{" "}
-                  {anime.episodes} 话
-                </p>
-              </div>
-            </div>
-          );
-        })}
+        {animes.map((anime) => (
+          <AnimeCard
+            key={anime.animeID}
+            anime={anime}
+            onClick={() => setSelectedAnime(anime)}
+          />
+        ))}
       </div>
 
       {/* ✅ 弹窗详情 */}

@@ -3,11 +3,12 @@
 import service from "./core/request"; // 引入自定义 Axios 实例（含拦截器）
 import type {
   AnimeInfo,
-  PageResponse,
+  // PageResponse,
   AnimeListRequest,
   AnimeTypeRequest,
   AnimeSearchRequest,
 } from "@/types/anime";
+import type { PageResponse } from "@/types/common";
 
 // 为了提高可读性，这里定义统一的返回类型别名
 type AnimeListResponse = PageResponse<AnimeInfo>;

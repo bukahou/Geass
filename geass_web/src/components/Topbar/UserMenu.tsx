@@ -86,6 +86,14 @@ export default function UserMenu() {
               <div className="px-4 py-1 border-b border-gray-700 text-center">
                 {user.username}
               </div>
+
+              {/* ✅ 显示 Token（仅开发调试） */}
+              <div className="px-3 py-2 text-xs text-gray-400 border-b border-gray-700 select-all">
+                <span className="block font-mono break-words leading-tight">
+                  {user.token || "(无 token)"}
+                </span>
+              </div>
+
               <button
                 onClick={handleLogout}
                 className="w-full text-center py-2 hover:bg-gray-700 transition-colors"

@@ -1,11 +1,10 @@
+// src/components/Player/VideoPlayer.tsx
 "use client";
+import { usePlayer } from "./PlayerContext";
 
-interface VideoPlayerProps {
-  src: string;
-  title: string;
-}
+export default function VideoPlayer() {
+  const { src, title } = usePlayer();
 
-export default function VideoPlayer({ src, title }: VideoPlayerProps) {
   return (
     <div className="w-full bg-black rounded-xl overflow-hidden shadow-lg mt-4">
       <video

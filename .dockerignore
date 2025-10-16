@@ -1,0 +1,17 @@
+# 忽略整个 node_modules（包括 web 子目录的）
+**/node_modules
+
+# 忽略构建产物
+**/.next
+
+# 忽略编辑器配置和 Git 仓库
+**/.vscode
+**/.git
+
+# 忽略日志和缓存
+*.log
+*.tsbuildinfo
+
+# 忽略文档
+*.md
+README.md

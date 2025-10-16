@@ -2,10 +2,11 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import PlayerRoot from "@/components/Player/PlayerRoot";
 import type { PlayerInitData } from "@/types/player";
 
-export default function PlayerPage() {
+function PlayerContent() {
   const params = useSearchParams();
   const dataParam = params.get("data");
 
@@ -28,4 +29,16 @@ export default function PlayerPage() {
   }
 
   return <PlayerRoot init={init} />;
+}
+
+export default function PlayerPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="text-center text-gray-400 py-20">加载中...</div>
+      }
+    >
+      <PlayerContent />
+    </Suspense>
+  );
 }
